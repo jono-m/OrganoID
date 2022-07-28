@@ -1,0 +1,1 @@
+python OrganoID.py run OptimizedModel Publication\Dataset\OriginalData\testing\Timelapse.tif Publication\Figure2\2d\Images --track --overlay --gif --border

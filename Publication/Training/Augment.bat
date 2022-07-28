@@ -1,0 +1,1 @@
+python OrganoID.py augment Publication\OriginalData\training\pre_augmented Publication\OriginalData\training 2000
