@@ -1,3 +1,8 @@
+from pathlib import Path
+import sys
+
+sys.path.append(str(Path(".").resolve()))
+
 import matplotlib.pyplot as plt
 import colorsys
 import numpy as np
@@ -43,6 +48,7 @@ def Plot():
 
         negativeControlFPA = GetData(data, 6, 0) / GetData(data, 4, 0)
         fpa = maskedTotalFluorescences / areas - np.mean(negativeControlFPA, axis=1)[:, None]
+        fpa = fpa/1000
 
         totalFluorescences = totalFluorescences - np.mean(GetData(data, 5, 0), axis=1)[:, None]
         totalFluorescences = totalFluorescences / 100000
@@ -62,7 +68,8 @@ def Plot():
 
     plt.xticks(np.arange(0, 73, 12))
     axes[0, 1].legend()
-    plt.xlabel("Time (hours)")
+    [ax.set_xlabel("Time (hours)") for ax in [axes[1, 0], axes[1, 1]]]
+    plt.tight_layout()
     plt.show()
 
 

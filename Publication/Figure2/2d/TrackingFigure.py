@@ -30,7 +30,6 @@ def DrawAndHighlight(labeled, image, labelsAndColorToHighlight, savePath):
         drawer.text((xC, yC), str(rp.label), anchor="ms", fill=(255, 255, 255, 255), font=font)
     image = Image.fromarray(image).convert("RGBA")
     image = Image.alpha_composite(image, overlay)
-    image.show()
     image.save(savePath)
 
 

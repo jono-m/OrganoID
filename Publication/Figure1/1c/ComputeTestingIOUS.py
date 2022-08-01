@@ -10,7 +10,7 @@ import numpy as np
 datasets = ["PDAC", "ACC", "C", "Lung"]
 names = ["PDAC", "ACC", "Colon", "Lung"]
 
-liteModel = LoadLiteModel(Path(r"Publication\OriginalModel\model.tflite"))
+liteModel = LoadLiteModel(Path(r"OptimizedModel"))
 
 iousFile = open(Path(r"Publication\Figure1\1c\IOUs.csv"), mode="w+")
 for dataset, name in zip(datasets, names):

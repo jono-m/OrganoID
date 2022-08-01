@@ -42,7 +42,7 @@ def LabeledImagesToColoredImages(images: np.ndarray, colors=None):
                   (255, 255, 0),
                   (255, 0, 255),
                   (0, 255, 255),
-                  (255, 255, 255)]
+                  (128, 128, 128)]
     cycles = math.ceil(float(np.max(images)) / len(colors))
     colorMap = np.asarray([(0, 0, 0)] + colors * cycles, dtype=np.uint8)
     colorized = colorMap[images]

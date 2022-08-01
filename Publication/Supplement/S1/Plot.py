@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 plt.rcParams['svg.fonttype'] = 'none'
 import numpy as np
 
-lines = open(Path(r"Publication\Supplement\S1C\Losses.csv"), "r").read().split("\n")[1:-1]
+lines = open(Path(r"Publication\Supplement\S1\Losses.csv"), "r").read().split("\n")[1:-1]
 losses = np.asarray([[float(x) for x in line.split(",")] for line in lines])
 epoch = losses[:, 0]
 trainingLosses = losses[:, 1]

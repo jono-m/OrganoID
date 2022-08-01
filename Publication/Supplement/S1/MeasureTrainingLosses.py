@@ -36,7 +36,7 @@ for modelPath in modelPaths:
     validationLoss = lossFunction(validationSegPrep, validationRes).numpy()
     data += "\n%d,%f,%f" % (epoch, trainingLoss, validationLoss)
 
-outFile = open(Path(r"Publication\Supplement\S1C\Losses.csv"), "w+")
+outFile = open(Path(r"Publication\Supplement\S1\Losses.csv"), "w+")
 outFile.write("Epoch, Training Loss, Validation Loss")
 outFile.write(data)
 outFile.close()
