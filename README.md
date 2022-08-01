@@ -36,3 +36,8 @@ training instructions:
 Such as:
 
 > python OrganoID.py train /path/to/trainingData /path/to/outputFolder NewModelName -M TrainableModel
+
+DATASET:
+
+The dataset for model training and all validation/testing from the OrganoID publication is openly available here:
+https://osf.io/xmes4/
