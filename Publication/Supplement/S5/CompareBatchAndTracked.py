@@ -21,11 +21,11 @@ hue = 343 / 360
 colors = [colorsys.hsv_to_rgb(hue, sat, 1) for sat in np.linspace(0.1, 1, 4)] + \
          [colorsys.hsv_to_rgb(hue, 1, val) for val in np.linspace(0.8, 0, 3)]
 
-soData = pandas.read_csv(Path(r"Publication\Figure3\3c\Data.csv"))
+soData = pandas.read_csv(Path(r"Publication\Figure3\OrganoidMeasurements.csv"))
 
 dosages = np.unique(soData["Dosage"])
 soData = soData.set_index(["Dosage", "Replicate", "Organoid ID", "Time"])
-soData["Fluorescence Per Area"] = soData["Masked fluorescence"] / soData["Area"]
+soData["Fluorescence Per Area"] = soData["Fluorescence"] / soData["Area"]
 
 
 def CompareBatchAndTracked(column):
@@ -59,5 +59,5 @@ def CompareBatchAndTracked(column):
     print("Batch SEM: %f\nTracked: %f\n" % (np.mean(batchSEMs), np.mean(trackedSEMs)))
 
 
-CompareBatchAndTracked("Circularity")
+CompareBatchAndTracked("Fluorescence Per Area")
 plt.show()
