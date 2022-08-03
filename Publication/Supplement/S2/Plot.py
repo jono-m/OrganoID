@@ -42,7 +42,7 @@ for i, iou in enumerate(ious):
 
 plt.axvline(0.5, color=colors[0], ls='dashed')
 plt.xlim([0.4, 1])
-plt.yticks([1, 2, 3, 4], namesFormatted)
+plt.yticks([1, 2, 3, 4, 5], namesFormatted)
 plt.xlabel("Intersection-over-union")
 
 names.insert(1, "Non-PDAC")

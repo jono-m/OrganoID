@@ -3,9 +3,6 @@ from pathlib import Path
 
 sys.path.append(str(Path(".").resolve()))
 import matplotlib.pyplot as plt
-import numpy as np
-import scipy.stats
-from Publication.Statistics import linr_ci
 import pandas
 from Publication.PlottingUtils import CorrelationPlot
 
@@ -23,26 +20,9 @@ plt.rcParams['legend.fontsize'] = fontsize
 
 countData = pandas.read_csv(r"Publication\Figure2\2b-c\CountComparison.csv")
 organoidData = pandas.read_csv(r"Publication\Figure2\2b-c\OrganoidComparison.csv")
-
-PCimages = ["PDAC1", "PDAC3", "PDAC7", "PDAC8", "PDAC9", "PDAC10", "Lung3"]
-
-PCorganoidData = organoidData[organoidData["Filename"].isin(PCimages)]
-BForganoidData = organoidData[~organoidData["Filename"].isin(PCimages)]
-
 CorrelationPlot(countData, "Manual count", "OrganoID count", "Image", "Count", "")
 
-toPlot = [("Area", "All")]
-for name, data in [("All", organoidData), ("PC", PCorganoidData), ("BF", BForganoidData)]:
-    print("%s:" % name)
-    featuresData = data.pivot_table(index=["Filename", "ID"], columns=["Feature"])
-    for feature in ["Circularity", "Solidity", "Eccentricity", "Perimeter", "Area"]:
-        featureData = featuresData.xs(feature, axis=1, level=1)
-        featuresX = featureData["Manual"]
-        featuresY = featureData["Automated"]
-        ccc, loc, hic = linr_ci(featuresX, featuresY)
-        print("\t%s\t%f (95%% CI %f-%f)" % (feature, ccc, loc, hic))
-
-        if (feature, name) in toPlot:
-            CorrelationPlot(featureData, "Manual " + feature, "OrganoID " + feature, "Organoid",
-                            feature, "")
+featuresData = organoidData.pivot_table(index=["Filename", "ID"], columns=["Feature"])
+featureData = featuresData.xs("Area", axis=1, level=1) * (6.8644 / 1000)
+CorrelationPlot(featureData, "Manual area", "OrganoID area", "Organoid", "Area", r"x $10^3 \mu m^2$")
 plt.show()

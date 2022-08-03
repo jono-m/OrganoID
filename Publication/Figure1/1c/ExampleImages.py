@@ -14,15 +14,18 @@ outPath.mkdir(parents=True, exist_ok=True)
 model = LoadLiteModel(Path(r"OptimizedModel"))
 images = PrepareImagesForModel(LoadPILImages(
     [Path(r"Publication\Dataset\OriginalData\testing\images\%s*" % name) for name in
-     exampleImageNames]), model)
+     exampleImageNames]) + LoadPILImages(
+    Path(r"Publication\Dataset\MouseOrganoids\validation\images\M13.png")),
+                               model)
 segmentations = PrepareSegmentationsForModel(LoadPILImages(
     [Path(r"Publication\Dataset\OriginalData\testing\segmentations\%s*" % name) for name in
-     exampleImageNames]),
-    model)
+     exampleImageNames]) + LoadPILImages(
+    Path(r"Publication\Dataset\MouseOrganoids\validation\segmentations\M13.png")),
+                                             model)
 
 detections = Detect(model, images)
 
-for i, name in enumerate(exampleImageNames):
+for i, name in enumerate(exampleImageNames + ["M13"]):
     actualImage = segmentations[i]
     predictionImage = detections[i]
     groundTruthColored = np.zeros([512, 512, 3], dtype=np.uint8)

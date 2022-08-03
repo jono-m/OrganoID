@@ -18,4 +18,12 @@ for dataset, name in zip(datasets, names):
     liteIOUs = ComputeIOUs(liteModel, images, segmentations)
 
     iousFile.write(",".join([name] + [str(x) for x in liteIOUs]) + "\n")
+images = LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\testing\images")) + \
+         LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\training\pre_augmented\images")) + \
+         LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\validation\images"))
+segmentations = LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\testing\segmentations")) + \
+                LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\training\pre_augmented\segmentations")) + \
+                LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\validation\segmentations"))
+mouseIOUs = ComputeIOUs(liteModel, images, segmentations)
+iousFile.write(",".join(["Mouse"] + [str(x) for x in mouseIOUs]) + "\n")
 iousFile.close()

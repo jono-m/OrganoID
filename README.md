@@ -12,9 +12,8 @@ INSTALLATION:
 To set up OrganoID source dependencies, create an empty Conda environment (e.g., with miniconda) and
 install all packages listed in <i><b>requirements.txt</b></i>.
 
-NOTE: OrganoID uses TensorFlow for neural network predictions. It is recommended that this be
-installed through the Conda package manager. Additionally, TensorFlow will automatically run on your
-GPU if compatible libraries are installed for your graphics card (e.g. NVIDIA CUDA).
+NOTE: OrganoID uses TensorFlow for neural network predictions. TensorFlow will automatically run on your
+GPU if compatible libraries are installed for your graphics card (e.g. NVIDIA CUDA). See tensorflow.org/install for guidance.
 
 INSTRUCTIONS:
 

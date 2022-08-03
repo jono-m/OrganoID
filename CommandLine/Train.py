@@ -30,21 +30,26 @@ class Train(Program):
         parser.add_argument("-OD", dest='originalData', default=None,
                             help="Path to training data for existing model.",
                             type=pathlib.Path)
-        parser.add_argument("-E", dest='epochs', default=100,
+        parser.add_argument("-E", dest='epochs', default=400,
                             help="How many times the full image dataset should be learned.",
                             type=int)
-        parser.add_argument("-DR", dest='dropoutRate', default=0.2,
+        parser.add_argument("-DR", dest='dropoutRate', default=0.125,
                             help="Dropout rate of CNN during training.", type=float)
         parser.add_argument("-LR", dest='learningRate', default=0.001,
                             help="Neural network learning rate.", type=float)
-        parser.add_argument("-P", dest='patience', default=5,
+        parser.add_argument("-P", dest='patience', default=10,
                             help="Stop training after this many epochs with no improvement.",
+                            type=int)
+        parser.add_argument("-F", dest='filters', default=8,
+                            help="The number of filters in the first convolutional layer.",
                             type=int)
         parser.add_argument("-S", dest='size', nargs=2, default=[512, 512],
                             help="Size of input images (e.g. -S 512 512). Not used if -M is "
                                  "specified.", type=int)
         parser.add_argument("--lite", action="store_true",
                             help="If set, the model will be saved as a TFLite model.")
+        parser.add_argument("--saveall", action="store_true",
+                            help="If set, a copy of the model will be saved after each epoch.")
 
     def RunProgram(self, parserArgs: argparse.Namespace):
         from Core.Model import TrainModel, BuildModel, GroundTruth, LoadModel
@@ -93,4 +98,4 @@ class Train(Program):
                                    original_validationSegmentationsPath.iterdir())]
         TrainModel(model, parserArgs.learningRate, parserArgs.patience, parserArgs.epochs,
                    parserArgs.batchSize, trainingData, validationData, parserArgs.saveDirectory,
-                   parserArgs.saveName, parserArgs.lite)
+                   parserArgs.saveName, parserArgs.lite, parserArgs.saveall)

@@ -63,7 +63,7 @@ def BuildModel(imageSize: Tuple[int, int], dropoutRate: float, firstLayerFilterC
 
 def TrainModel(model: tf.keras.Model, learningRate, patience, epochs, batchSize,
                trainingData: List['GroundTruth'], validationData: List['GroundTruth'],
-               saveDirectory: Path, saveNamePrefix: str, saveLite=False):
+               saveDirectory: Path, saveNamePrefix: str, saveLite, saveAll: bool):
     savePath = saveDirectory / (saveNamePrefix + "_E{epoch:03d}")
 
     # Adam optimizer is used for SGD. Binary cross-entropy for loss.
@@ -74,7 +74,9 @@ def TrainModel(model: tf.keras.Model, learningRate, patience, epochs, batchSize,
     # (window size is "patience"). We also will save a copy of the model after every epoch.
     callbacks = [
         tf.keras.callbacks.EarlyStopping(patience=patience, verbose=1, restore_best_weights=True),
-        ModelCheckpoint(savePath.absolute(), model, saveLite)]
+    ]
+    if saveAll:
+        callbacks.append(ModelCheckpoint(savePath.absolute(), model, saveLite))
 
     model.fit(x=ImageGenerator(trainingData, batchSize, model),
               validation_data=LoadGroundTruths(validationData, model),

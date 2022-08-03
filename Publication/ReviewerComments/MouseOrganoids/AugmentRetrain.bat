@@ -1,0 +1,1 @@
+python OrganoID.py augment Publication\Dataset\MouseOrganoids\training\pre_augmented Publication\Dataset\MouseOrganoids\training 500

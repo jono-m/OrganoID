@@ -51,7 +51,7 @@ def DoPlotScatterEnvelope(lab, x, y, c, z):
 
 def DoPlot():
     plt.rcParams['svg.fonttype'] = 'none'
-    squareMicronsPerSquarePixel = 6.8644
+    squareMicronsPerSquarePixel = 1.31**2
     areasPerFrame = [{rp.label: rp.area * squareMicronsPerSquarePixel for rp in
                       skimage.measure.regionprops(i)} for i in labeledImages]
     for x in labelsToHighlight:
@@ -88,3 +88,4 @@ DrawAndHighlight(labeledImages[23], originalImages[23], labelsToHighlight,
                  Path(r"Publication\Figure2\2d\Images\Timelapse_46hr.png"))
 DrawAndHighlight(labeledImages[46], originalImages[46], labelsToHighlight,
                  Path(r"Publication\Figure2\2d\Images\Timelapse_92hr.png"))
+DoPlot()

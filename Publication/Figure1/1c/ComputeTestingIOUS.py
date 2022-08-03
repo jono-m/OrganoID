@@ -19,4 +19,13 @@ for dataset, name in zip(datasets, names):
         Path(r"Publication\Dataset\OriginalData\testing\segmentations\%s*" % dataset))
     liteIOUs = ComputeIOUs(liteModel, images, segmentations)
     iousFile.write(name + ": " + str(np.mean(liteIOUs)) + " (SD: " + str(np.std(liteIOUs)) + ")\n")
+
+images = LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\testing\images")) + \
+         LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\training\pre_augmented\images")) + \
+         LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\validation\images"))
+segmentations = LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\testing\segmentations")) + \
+                LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\training\pre_augmented\segmentations")) + \
+                LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\validation\segmentations"))
+mouseIOUs = ComputeIOUs(liteModel, images, segmentations)
+iousFile.write("Mouse: " + str(np.mean(mouseIOUs)) + " (SD: " + str(np.std(mouseIOUs)) + ")\n")
 iousFile.close()

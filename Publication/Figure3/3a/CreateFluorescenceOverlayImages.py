@@ -50,7 +50,7 @@ for piImage, labeledImage, brightfieldImage in zip(piImages, labeledImages, brig
         piNormalized = np.asarray(piImage)
         piNormalized = 2 * (piNormalized - np.min(piNormalized)) / (
                 np.max(piNormalized) - np.min(piNormalized))
-        piNormalized = np.power(np.clip(piNormalized, 0, 1), 3)
+        piNormalized = np.clip(piNormalized, 0, 1)
         piAlphaImage = np.full(list(piNormalized.shape) + [4], [255, 31, 91, 255])
         piAlphaImage[:, :, 3] = piNormalized * 255
         piAlphaImage = piAlphaImage.astype(np.uint8)

@@ -7,8 +7,8 @@ from Publication.Statistics import linr_ci
 
 fontsize = 10
 corrColor = [x / 255 for x in (0, 205, 108)]
-meanColor = [x / 255 for x in (0, 154, 222)]
-lodColor = [x / 255 for x in (255, 31, 91)]
+meanColor = [x / 255 for x in (0, 205, 108)]
+lodColor = [x / 255 for x in (0, 154, 222)]
 plt.rcParams['svg.fonttype'] = 'none'
 plt.rcParams['font.family'] = ['sans-serif']
 plt.rcParams['font.sans-serif'] = ['Arial']
@@ -29,11 +29,11 @@ def TimecoursePlot(df: pandas.Series, axes: plt.Axes):
         axes.errorbar(response.mean().index, response.mean(), response.sem(),
                       label="%d nM" % dosage, color=color)
     n = df.groupby(["Dosage", "Time"]).count()
-    axes.set_ylabel(responseLabel + " (n~%d)" % (np.mean(n)))
+    axes.set_ylabel(responseLabel)
     axes.set_xlabel("Time (hours)")
 
 
-def DoseReponsePlot(df: pandas.Series, axes: plt.Axes, foldChange: bool = None, color=piColors[4]):
+def DoseReponsePlot(df: pandas.Series, axes: plt.Axes, color=piColors[4]):
     def fsigmoid(x, a, b, c, d):
         return c / (1.0 + np.exp(a * (np.log(x) - b))) + d
 
@@ -44,15 +44,9 @@ def DoseReponsePlot(df: pandas.Series, axes: plt.Axes, foldChange: bool = None, 
         return popt
 
     responseLabel = str(df.name)
-    if foldChange is not None:
-        meanControlResponse = df.groupby("Dosage").mean()[0]
-        if foldChange:
-            df = df / meanControlResponse
-        else:
-            df = df - meanControlResponse
-        df = df[df.index.get_level_values("Dosage") != 0]
+    df = df[df.index.get_level_values("Dosage") != 0]
     df = df.groupby("Dosage")
-    axes.errorbar(df.mean().index, df.mean(), yerr=df.sem(), fmt="o", color=color)
+    axes.errorbar(df.mean().index, df.mean(), yerr=df.sem(), fmt="o", color=color, label=responseLabel)
     axes.set_xscale('log')
     axes.set_ylabel(responseLabel)
     try:
@@ -61,7 +55,7 @@ def DoseReponsePlot(df: pandas.Series, axes: plt.Axes, foldChange: bool = None, 
         x = np.linspace(np.min(df.mean().index), np.max(df.mean().index), 10000)
         axes.plot(x, fsigmoid(x, *fit), color=color)
         yec50 = fsigmoid(ec50, *fit)
-        axes.plot(ec50, yec50, 'xk')
+        axes.axvline(ec50, yec50 - 100, yec50 + 100, color="black", linestyle="--")
         axes.text(ec50 + 10, yec50, "EC50: %.2f nM" % ec50)
     except Exception as e:
         print(e)
