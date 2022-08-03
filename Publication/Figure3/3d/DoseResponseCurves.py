@@ -31,7 +31,8 @@ piData = pandas.read_csv(r"Publication\Figure3\PIMeasurements.csv").set_index(
 
 def FoldChange(df: pandas.Series, from_max: bool = True):
     baseResponse = df.loc[1000 if from_max else 0].mean()
-    return (100 * df / baseResponse).rename(str(df.name) + " (%% %s. control)" % ("pos" if from_max else "neg"))
+    return (100 * df / baseResponse).rename(
+        str(df.name) + " (%% %s. control)" % ("pos" if from_max else "neg"))
 
 
 fluorescence = piData["Fluorescence"]
@@ -39,9 +40,11 @@ mtsViability = mtsData["Viability"]
 
 organoidArea = organoidData.groupby(["Dosage", "Replicate"]).sum()["Area"]
 organoidCount = organoidData.groupby(["Dosage", "Replicate"]).count()["Area"].rename("Count")
-maskedFluorescence = organoidData.groupby(["Dosage", "Replicate"]).sum()["Fluorescence"].rename("Masked fluorescence")
-mtsNormalized = (piData["Fluorescence"] / mtsData["Viability"]).rename("MTS-normalized fluorescence")
-areaNormalized = (piData["Fluorescence"] / organoidArea).rename("Area-normalized fluorescence")
+maskedFluorescence = organoidData.groupby(["Dosage", "Replicate"]).sum()["Fluorescence"].rename(
+    "Masked fluorescence")
+mtsNormalized = (piData["Fluorescence"] / mtsData["Viability"]).rename(
+    "MTS-normalized fluorescence")
+areaNormalized = (maskedFluorescence / organoidArea).rename("Area-normalized fluorescence")
 
 fig, axes = plt.subplots(4, 1, sharex='all')
 axes = axes.flatten()
@@ -50,7 +53,6 @@ DoseReponsePlot(FoldChange(organoidArea, False), axes[1], (0, .7, 0))
 DoseReponsePlot(FoldChange(fluorescence), axes[2])
 DoseReponsePlot(FoldChange(areaNormalized), axes[3])
 axes[3].set_xlabel("Gemcitabine dosage (nM)")
-
 
 _, axes = plt.subplots(1, 3)
 axes = axes.flatten()

@@ -1,9 +1,10 @@
+import pathlib
+
 import pandas
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn
-
 
 fontsize = 10
 plt.rcParams['svg.fonttype'] = 'none'
@@ -37,6 +38,7 @@ for feature in features:
                  np.sqrt((featureData.loc[dosageB, "SD"] ** 2 +
                           featureData.loc[dosageA, "SD"] ** 2) / 2))
             result.loc[dosageA, dosageB] = float(d)
+    result.to_csv(pathlib.Path(r"Publication\Figure3\3e") / ("EffectSize%s.csv" % feature))
     results.append(result.iloc[::-1])
     print(feature)
     print(result)
@@ -48,7 +50,8 @@ for i, (feature, result) in enumerate(zip(features, results)):
     plt.title(feature)
     labelY = result.index.astype(int)
     labelX = result.columns.astype(int)
-    seaborn.heatmap(result, vmin=dMin, vmax=dMax, center=0, square=True, xticklabels=labelX, yticklabels=labelY,
+    seaborn.heatmap(result, vmin=dMin, vmax=dMax, center=0, square=True, xticklabels=labelX,
+                    yticklabels=labelY,
                     cmap=seaborn.cm.icefire_r)
     plt.ylabel("Dosage (nM)")
     plt.xlabel("Dosage (nM)")
