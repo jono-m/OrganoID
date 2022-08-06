@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas
 import seaborn
 import scipy.optimize
+import scipy.stats
 
 fontsize = 10
 corrColor = [x / 255 for x in (0, 205, 108)]
@@ -25,19 +26,30 @@ soData = pandas.read_csv(Path(r"Publication\Figure3\OrganoidMeasurements.csv"))
 
 dosages = np.unique(soData["Dosage"])
 soData = soData.set_index(["Dosage", "Replicate", "Organoid ID", "Time"])
+soData = soData.drop(columns=["X", "Y"])
 
 initialBatch = soData.query("Time == 0").groupby(["Dosage", "Replicate"]).mean()
-batchFoldChange = soData.query("Time != 0").groupby(["Dosage", "Replicate", "Time"]).mean() / initialBatch
+batchFoldChange = soData / initialBatch
 batchFoldChange = batchFoldChange.groupby(["Dosage", "Time"])
-batchCovs = (batchFoldChange.std() / np.abs(batchFoldChange.mean())).mean()
+batchCovs = (batchFoldChange.std() / np.abs(batchFoldChange.mean()))
 
 initialTracked = soData.reset_index().sort_values("Time").groupby(
     ["Dosage", "Replicate", "Organoid ID"]).first().drop(columns="Time")
 trackedFoldChange = soData / initialTracked
-trackedFoldChange = trackedFoldChange.groupby(["Dosage", "Replicate", "Time"]).mean().groupby(["Dosage", "Time"])
-trackedCovs = (trackedFoldChange.std() / np.abs(trackedFoldChange.mean())).mean()
+trackedFoldChange = trackedFoldChange.groupby(["Dosage", "Time"])
+trackedCovs = (trackedFoldChange.std() / np.abs(trackedFoldChange.mean()))
 
-print(batchCovs)
-print(trackedCovs)
-print((trackedCovs-batchCovs)/((batchCovs+trackedCovs)/2))
+trackedCovsMelted = trackedCovs.melt()
+trackedCovsMelted["Strategy"] = "Tracked"
+batchCovsMelted = batchCovs.melt()
+batchCovsMelted["Strategy"] = "Batch"
+covs = pandas.concat([trackedCovsMelted, batchCovsMelted])
+seaborn.boxplot(x="variable", y="value", data=covs, hue="Strategy", palette={"Tracked": corrColor,
+                                                                             "Batch": lodColor})
+plt.ylabel("CV across organoid replicates")
+plt.xlabel("Organoid feature (fold change)")
+
+print((batchCovs.mean() - trackedCovs.mean()) / ((batchCovs.mean() + trackedCovs.mean()) / 2))
+print(scipy.stats.ttest_ind(batchCovs, trackedCovs, axis=0, alternative='less',
+                            equal_var=False).pvalue)
 plt.show()

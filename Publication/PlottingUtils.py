@@ -25,6 +25,8 @@ def TimecoursePlot(df: pandas.Series, axes: plt.Axes):
     responseLabel = str(df.name)
     dosages = np.unique(df.index.get_level_values("Dosage"))
     for color, dosage in zip(reversed(piColors), reversed(dosages)):
+        if dosage == 0:
+            continue
         response = df[df.index.get_level_values("Dosage") == dosage].groupby("Time")
         axes.errorbar(response.mean().index, response.mean(), response.sem(),
                       label="%d nM" % dosage, color=color)

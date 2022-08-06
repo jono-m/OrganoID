@@ -66,8 +66,8 @@ def Cleanup(images: np.ndarray, minimumArea: int, removeBorders: bool, fillHoles
                 continue
             coords = np.asarray(rp.coords)
             if removeBorders and (0 in coords or
-                                  images.shape[1] in coords[:, 0] or
-                                  images.shape[2] in coords[:, 1]):
+                                  images.shape[1]-1 in coords[:, 0] or
+                                  images.shape[2]-1 in coords[:, 1]):
                 continue
             mir, mic, mar, mac = rp.bbox
             cleanedImages[i, mir:mar, mic:mac] = np.where(

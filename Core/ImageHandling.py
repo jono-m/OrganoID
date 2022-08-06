@@ -34,7 +34,7 @@ def ImagesToHeatmaps(images: np.ndarray):
     return heatmaps
 
 
-def LabeledImagesToColoredImages(images: np.ndarray, colors=None):
+def LabeledImagesToColoredImages(images: np.ndarray, colors=None, fontSize=0):
     if colors is None:
         colors = [(255, 0, 0),
                   (0, 255, 0),
@@ -46,6 +46,16 @@ def LabeledImagesToColoredImages(images: np.ndarray, colors=None):
     cycles = math.ceil(float(np.max(images)) / len(colors))
     colorMap = np.asarray([(0, 0, 0)] + colors * cycles, dtype=np.uint8)
     colorized = colorMap[images]
+
+    if fontSize > 0:
+        font = ImageFont.truetype("arial.ttf", fontSize)
+        for i in range(images.shape[0]):
+            image = Image.fromarray(colorized[i])
+            drawer = ImageDraw.Draw(image)
+            for rp in skimage.measure.regionprops(images[i]):
+                x, y = reversed(rp.centroid)
+                drawer.text((x, y), str(rp.label), anchor="ms", fill=(255, 255, 255), font=font)
+            colorized[i] = np.asarray(image)
     return colorized
 
 

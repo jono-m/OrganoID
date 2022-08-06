@@ -34,22 +34,30 @@ def FoldChangeFromInitial(df: pandas.Series):
 def SubtractNegativeControl(df: pandas.Series):
     negativeResponse = df.reset_index().query("Dosage == 0").groupby("Time").mean()[df.name]
     responses = df[df.index.get_level_values("Dosage") != 0]
-    return (responses - negativeResponse).rename(str(df.name) + " (change from control)")
+    return responses - negativeResponse
 
 
-organoidCount = organoidData.groupby(["Dosage", "Replicate", "Time"]).count()["Area"]
+initialFeatures = organoidData.reset_index().sort_values("Time").groupby(
+    ["Dosage", "Replicate", "Organoid ID"]).first().drop(columns="Time")
+
+organoidCount = organoidData.groupby(["Dosage", "Replicate", "Time"]).count()["Area"].rename(
+    "Count")
+trackedOrganoidData = organoidData / initialFeatures
+
 maskedFluorescence = organoidData["Fluorescence"].groupby(piData.index.names).sum().rename(
     "Masked fluorescence")
 organoidArea = organoidData["Area"].groupby(piData.index.names).sum().rename("Total organoid area")
 maskedFluorescencePerArea = (maskedFluorescence / organoidArea).rename(
     "Masked fluorescence per total area")
 
+trackedFPA = trackedOrganoidData["Fluorescence"] / trackedOrganoidData["Area"]
+trackedFPA = trackedFPA.rename("Organoid fluorescence/area (FC)")
 fig, axes = plt.subplots(2, 2, sharex='all')
 axes = axes.flatten()
-TimecoursePlot(FoldChangeFromInitial(organoidArea), axes[0])
-TimecoursePlot(SubtractNegativeControl(piData["Fluorescence"]), axes[1])
+TimecoursePlot(trackedOrganoidData["Area"].rename("Area (FC)"), axes[0])
+TimecoursePlot(SubtractNegativeControl(piData["Fluorescence"] / 100000), axes[1])
 TimecoursePlot(FoldChangeFromInitial(organoidCount), axes[2])
-TimecoursePlot(SubtractNegativeControl(maskedFluorescencePerArea), axes[3])
+TimecoursePlot(SubtractNegativeControl(trackedFPA), axes[3])
 axes[1].legend()
 [ax.set_xlabel("") for ax in axes[:2]]
 plt.show()

@@ -39,7 +39,7 @@ segmentations = np.stack(segmentations)
 detections = Detect(model, images)
 organoID_labeled = Cleanup(
     SeparateContours(detections, DetectEdges(detections, 2, 0.005, 0.05, 0.5), 0.5, 2),
-    200, False, False)
+    200, True, False)
 
 countFile = open(r"Publication\Figure2\2b-c\CountComparison.csv", "w+")
 organoidFile = open(r"Publication\Figure2\2b-c\OrganoidComparison.csv", "w+")
@@ -48,7 +48,7 @@ outputPath.mkdir(exist_ok=True)
 countFile.write("Filename,Manual,Automated")
 organoidFile.write("Filename,ID,Feature,Manual,Automated")
 
-segmentations = Cleanup(segmentations, 200, False, False)
+segmentations = Cleanup(segmentations, 200, True, False)
 for i in range(segmentations.shape[0]):
     filename = Path(pilImages[i].filename).stem
     printRep(str(i + 1) + "/" + str(segmentations.shape[0]))
@@ -59,7 +59,7 @@ for i in range(segmentations.shape[0]):
     matches = MatchOrganoidsInImages(manualOrganoids, organoIDOrganoids,
                                      costFunction=Inverse(Overlap),
                                      costOfNonAssignment=1)
-    oID = 0
+    oID = 1
 
     manualImage = np.zeros([512, 512], dtype=np.uint8)
     automatedImage = np.zeros([512, 512], dtype=np.uint8)
@@ -92,7 +92,7 @@ for i in range(segmentations.shape[0]):
     m = ImageDraw.Draw(manualImageCol)
     a = ImageDraw.Draw(automatedImageCol)
     font = ImageFont.truetype("arial.ttf", 20)
-    oID = 0
+    oID = 1
     for manualOrganoid, automatedOrganoid in matches:
         if manualOrganoid is None or automatedOrganoid is None:
             continue
