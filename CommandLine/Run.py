@@ -60,8 +60,6 @@ class Run(Program):
         parser.add_argument("--gif", action="store_true",
                             help="Only used if. If this is set, overlay images will"
                                  "be produced as a .gif")
-        parser.add_argument("--show", action="store_true",
-                            help="If this is set, the last image to be produced will be shown.")
         parser.add_argument("--batch", action="store_true",
                             help="If this is set, image stacks will be separately tracked.")
 
@@ -75,68 +73,12 @@ class Run(Program):
             SavePILImageStack(stack, outputPath / (p.stem + suffix + p.suffix))
 
     def RunProgram(self, parserArgs: argparse.Namespace):
-        import numpy as np
-        from Core.Model import LoadModel, Detect, LoadLiteModel, PrepareImagesForModel
-        from Core.Identification import Cleanup, SeparateContours, DetectEdges, Label
-        from Core.ImageHandling import LoadPILImages, ImagesToHeatmaps, \
-            LabeledImagesToColoredImages, DrawRegionsOnImages, SaveAsGIF, ConvertImagesToStacks
-        from Core.Tracking import Track, Inverse, Overlap
+        from Core.RunPipeline import RunPipeline
 
-        # Load the images
-        print("Loading model...")
-        print("-" * 100)
-        if parserArgs.modelPath.is_file():
-            model = LoadLiteModel(parserArgs.modelPath)
-        else:
-            model = LoadModel(parserArgs.modelPath)
-        print("-" * 100)
-        print("Model loaded.")
-        pilImages = LoadPILImages(parserArgs.imagesPath)
-        self.MakeDirectory(parserArgs.outputPath)
-        images = PrepareImagesForModel(pilImages, model)
-        detections = Detect(model, images, parserArgs.batchSize)
-        if parserArgs.belief:
-            heatmaps = ImagesToHeatmaps(detections)
-            self.SaveImages(heatmaps, "_belief", pilImages, parserArgs.outputPath)
-        if parserArgs.binary:
-            thresholded: np.ndarray = detections > float(parserArgs.threshold)
-            self.SaveImages(thresholded, "_binary", pilImages, parserArgs.outputPath)
-        if parserArgs.no_separation:
-            labeled = Label(detections, parserArgs.threshold)
-        else:
-            edges = DetectEdges(detections, parserArgs.edgeSigma, parserArgs.edgeMin,
-                                parserArgs.edgeMax, parserArgs.threshold)
-            if parserArgs.edges:
-                self.SaveImages(edges, "_edges", pilImages, parserArgs.outputPath)
-            labeled = SeparateContours(detections, edges, parserArgs.threshold,
-                                       parserArgs.edgeSigma)
-        final = Cleanup(labeled, parserArgs.minimumArea, not parserArgs.border,
-                        not parserArgs.nofill)
-        if parserArgs.track:
-            i = 0
-            stacks = ConvertImagesToStacks(final, pilImages) if parserArgs.batch else [final]
-            for stack in stacks:
-                stack = Track(stack, 1, Inverse(Overlap))
-                final[i:(i + stack.shape[0])] = stack
-                i += stack.shape[0]
-
-        if parserArgs.overlay or parserArgs.gif:
-            overlay = DrawRegionsOnImages(final, images, (255, 255, 255), 16, (0, 255, 0))
-
-            if parserArgs.overlay:
-                self.SaveImages(overlay, "_overlay", pilImages, parserArgs.outputPath)
-
-            if parserArgs.gif:
-                if parserArgs.batch:
-                    stacks = ConvertImagesToStacks(overlay, pilImages)
-                    for stack, original in zip(stacks, pilImages):
-                        path = pathlib.Path(original.filename)
-                        SaveAsGIF(stack, parserArgs.outputPath / (path.stem + "_overlay.gif"))
-                else:
-                    SaveAsGIF(overlay, parserArgs.outputPath / "overlay.gif")
-
-        if parserArgs.colorize:
-            rgb = LabeledImagesToColoredImages(final)
-            self.SaveImages(rgb, "_color", pilImages, parserArgs.outputPath)
-
-        self.SaveImages(final, "_labeled", pilImages, parserArgs.outputPath)
+        RunPipeline(parserArgs.modelPath, parserArgs.imagesPath, parserArgs.outputPath,
+                    parserArgs.threshold, parserArgs.batchSize, parserArgs.edgeSigma,
+                    parserArgs.edgeMin, parserArgs.edgeMax, parserArgs.minimumArea,
+                    not parserArgs.nofill, not parserArgs.border, parserArgs.belief,
+                    parserArgs.binary, not parserArgs.no_separation, parserArgs.edges,
+                    parserArgs.colorize, True, parserArgs.track, parserArgs.overlay,
+                    parserArgs.gif, parserArgs.batch)

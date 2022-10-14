@@ -7,3 +7,4 @@ augmentor
 matplotlib
 pandas
 seaborn
+pyside6

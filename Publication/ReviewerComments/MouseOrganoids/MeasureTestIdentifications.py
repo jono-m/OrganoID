@@ -6,7 +6,7 @@ import numpy as np
 sys.path.append(str(Path(".").resolve()))
 
 from Core.Model import LoadLiteModel, Detect, PrepareImagesForModel, PrepareSegmentationsForModel, \
-    LoadModel
+    LoadFullModel
 from Core.Identification import SeparateContours, Cleanup, DetectEdges, Label
 from Core.ImageHandling import LoadPILImages
 from Core.Tracking import MatchOrganoidsInImages, Inverse, Overlap
@@ -14,7 +14,7 @@ from Core.HelperFunctions import printRep
 from PIL import Image
 import skimage.measure
 
-model = LoadModel(Path(r"Publication\ReviewerComments\MouseOrganoids\RetrainedModel"))
+model = LoadFullModel(Path(r"Publication\ReviewerComments\MouseOrganoids\RetrainedModel"))
 pilImages = LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\testing\images"))
 images = PrepareImagesForModel(pilImages, model)
 segmentationsRaw = LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\testing\segmentations"))

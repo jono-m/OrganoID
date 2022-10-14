@@ -11,7 +11,7 @@ from Core.HelperFunctions import printRep
 
 
 def ComputeOutline(image: np.ndarray):
-    return skimage.filters.sobel(image) > 0
+    return skimage.filters.sobel(image) > 0.00001
 
 
 def ImagesToHeatmaps(images: np.ndarray):
@@ -101,6 +101,8 @@ def ConvertImagesToPILImageStacks(images: np.ndarray, originalImages: List[Image
 
 
 def SavePILImageStack(stack: List[Image.Image], path: pathlib.Path):
+    if stack[0].mode[0] == "I":
+        path = path.parent / (path.stem + ".tif")
     if len(stack) == 1:
         stack[0].save(path)
     else:

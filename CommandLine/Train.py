@@ -52,10 +52,10 @@ class Train(Program):
                             help="If set, a copy of the model will be saved after each epoch.")
 
     def RunProgram(self, parserArgs: argparse.Namespace):
-        from Core.Model import TrainModel, BuildModel, GroundTruth, LoadModel
+        from Core.Model import TrainModel, BuildModel, GroundTruth, LoadFullModel
 
         if parserArgs.modelPath is not None:
-            model = LoadModel(parserArgs.modelPath)
+            model = LoadFullModel(parserArgs.modelPath)
         else:
             model = BuildModel(parserArgs.size, parserArgs.dropoutRate, 8)
 

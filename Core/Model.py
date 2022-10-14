@@ -159,7 +159,7 @@ def LoadGroundTruths(groundTruths: List[GroundTruth], model: ModelType):
     return images, segmentations
 
 
-def LoadModel(path: pathlib.Path):
+def LoadFullModel(path: pathlib.Path):
     return tf.keras.models.load_model(path)
 
 

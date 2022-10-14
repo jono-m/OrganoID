@@ -3,12 +3,12 @@ import sys
 
 sys.path.append(str(Path(".").resolve()))
 
-from Core.Model import LoadLiteModel, ComputeIOUs, LoadModel
+from Core.Model import LoadLiteModel, ComputeIOUs, LoadFullModel
 from Core.ImageHandling import LoadPILImages
 import numpy as np
 
 liteModel = LoadLiteModel(Path(r"OptimizedModel"))
-model = LoadModel(Path(r"Publication\ReviewerComments\MouseOrganoids\RetrainedModel"))
+model = LoadFullModel(Path(r"Publication\ReviewerComments\MouseOrganoids\RetrainedModel"))
 
 images = LoadPILImages(Path(r"Publication\Dataset\MouseOrganoids\testing\images"))
 segmentations = LoadPILImages(
