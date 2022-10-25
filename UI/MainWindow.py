@@ -61,7 +61,8 @@ class MainWindow(QMainWindow):
                     self.settingsWidget.trackWidget.isChecked(),
                     self.settingsWidget.overlayWidget.isChecked(),
                     self.settingsWidget.gifWidget.isChecked(),
-                    self.settingsWidget.batchWidget.isChecked()]
+                    self.settingsWidget.batchWidget.isChecked(),
+                    self.settingsWidget.regionProperties.isChecked()]
         ProcessingDialog(self, settings, finishedDelegate)
 
 
@@ -88,8 +89,29 @@ class ProcessingDialog(QDialog):
             MainWindow.Instance.processingWorker.ForceStop()
             MainWindow.Instance.processingWorker = ProcessingWorker()
 
+    @staticmethod
+    def TranslateString(input_string):
+
+        # Initial state
+        # String is stored as a list because
+        # python forbids the modification of
+        # a string
+        displayed_string = ""
+
+        # Loop on our input (transitions sequence)
+        for character in input_string:
+            # Backward transition
+            if character == "\b":
+                displayed_string = displayed_string[:-1]
+            else:
+                displayed_string = displayed_string + character
+
+        # We transform our "list" string back to a real string
+        return displayed_string
+
     def Update(self):
-        self.field.setText(MainWindow.Instance.processingWorker.GetOutputText())
+        self.field.setText(
+            self.TranslateString(MainWindow.Instance.processingWorker.GetOutputText()))
         if MainWindow.Instance.processingWorker.HasResults():
             self.timer.stop()
             self.done(0)
@@ -135,6 +157,7 @@ class SettingsWidget(QWidget):
         self.labeledWidget = CheckBoxWidget("Integer-labeled Image", True)
         self.overlayWidget = CheckBoxWidget("Overlay Image", False)
         self.gifWidget = CheckBoxWidget("GIF output", False)
+        self.regionProperties = CheckBoxWidget("Organoid Properties", False)
 
         self.trackWidget = CheckBoxWidget("Track as timelapse", False)
         self.batchWidget = CheckBoxWidget("Batch Tracking", False)
@@ -158,11 +181,12 @@ class SettingsWidget(QWidget):
                                                  self.binaryWidget,
                                                  self.edgeWidget,
                                                  self.colorizeWidget,
-                                                 self.labeledWidget]]
+                                                 self.overlayWidget,
+                                                 self.gifWidget,
+                                                 self.labeledWidget,
+                                                 self.regionProperties]]
 
         [trackingFormLayout.addWidget(x) for x in [self.trackWidget,
-                                                   self.overlayWidget,
-                                                   self.gifWidget,
                                                    self.batchWidget]]
         self.setLayout(layout)
 
@@ -273,10 +297,6 @@ class FileListWidget(QWidget):
         layout2.addWidget(self.removeButton)
         layout2.addWidget(self.previewButton, alignment=Qt.AlignBottom)
         self.paths = []
-        testP = Path(
-            r"C:\Users\jonoj\Repositories\OrganoID\Publication\Dataset\OriginalData\testing\images\Lung2.png")
-        self.paths += [testP]
-        self.fileView.addItems([str(p.absolute()) for p in [testP]])
         self.setLayout(layout0)
         self.ListSelectionChanged()
 

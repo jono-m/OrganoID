@@ -111,9 +111,11 @@ def SavePILImageStack(stack: List[Image.Image], path: pathlib.Path):
 
 def SaveAsGIF(images: np.ndarray, path: pathlib.Path):
     path.parent.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(images[0]).save(path, save_all=True,
-                                    append_images=[Image.fromarray(im) for im in images[1:]],
-                                    loop=0)
+    Image.fromarray(images[0]).convert(mode="RGB").save(path, save_all=True,
+                                                        append_images=[
+                                                            Image.fromarray(im).convert(mode="RGB")
+                                                            for im in images[1:]],
+                                                        loop=0)
 
 
 def LoadPILImages(source: Union[pathlib.Path, List[pathlib.Path]]) -> List[Image.Image]:

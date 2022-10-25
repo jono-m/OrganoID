@@ -39,7 +39,7 @@ def RunPipeline(modelPath: Path, imagePaths: List[Path], outputPath: Optional[Pa
                 edgeMax: float, minimumArea: int, fillHoles: bool, removeBorder: bool,
                 detectionOutput: bool, binaryOutput: bool, separateContours: bool,
                 edges: bool, colorLabeledOutput: bool, idLabeledOutput: bool,
-                track: bool, overlay: bool, gif: bool, batch: bool):
+                track: bool, overlay: bool, gif: bool, batch: bool, computeProps: bool):
     model = LoadModel(modelPath)
     # Load the images
     pilImages = LoadPILImages(imagePaths)
@@ -52,6 +52,8 @@ def RunPipeline(modelPath: Path, imagePaths: List[Path], outputPath: Optional[Pa
         if outputPath is not None:
             MakeDirectory(outputPath)
             SaveImages(data, "_" + name.lower(), pilImages, outputPath)
+            if gif:
+                outputImages[name] = data
         else:
             outputImages[name] = data
 
@@ -77,25 +79,31 @@ def RunPipeline(modelPath: Path, imagePaths: List[Path], outputPath: Optional[Pa
             cleanedImages[i:(i + stack.shape[0])] = stack
             i += stack.shape[0]
 
-    if overlay or gif:
+    if overlay:
         overlayImages = DrawRegionsOnImages(cleanedImages, preparedImages, (255, 255, 255), 16,
                                             (0, 255, 0))
-        if overlay:
-            Output('Overlay', overlayImages)
+        Output('Overlay', overlayImages)
 
-        if gif and outputPath is not None:
-            if batch:
-                stacks = ConvertImagesToStacks(overlayImages, pilImages)
-                for stack, original in zip(stacks, pilImages):
-                    path = Path(original.filename)
-                    SaveAsGIF(stack, outputPath / (path.stem + "_overlay.gif"))
-            else:
-                SaveAsGIF(overlayImages, outputPath / "overlay.gif")
+    if gif and outputPath is not None:
+        MakeDirectory(outputPath)
+        for name in outputImages:
+            stacks = ConvertImagesToStacks(outputImages[name], pilImages) if batch else [
+                outputImages[name]]
+            for stack, original in zip(stacks, pilImages):
+                path = Path(original.filename)
+                SaveAsGIF(stack, outputPath / (path.stem + "_" + name.lower() + ".gif"))
 
     if colorLabeledOutput:
         Output('Color-Labeled', LabeledImagesToColoredImages(cleanedImages))
 
     if idLabeledOutput:
         Output('ID-Labeled', cleanedImages)
+
+    if outputPath is not None and computeProps:
+        from Core.Analyze import AnalyzeAndExport
+        stacks = ConvertImagesToStacks(cleanedImages, pilImages) if batch else [cleanedImages]
+        for stack, original in zip(stacks, pilImages):
+            path = Path(original.filename)
+            AnalyzeAndExport(stack, outputPath / (path.stem + "_data.xlsx"))
 
     return outputImages
