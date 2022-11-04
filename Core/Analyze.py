@@ -24,4 +24,3 @@ def AnalyzeAndExport(images: np.ndarray, path: Path):
 
         for propertyName in propertyNames:
             data[propertyName].to_excel(writer, sheet_name=propertyName)
-g

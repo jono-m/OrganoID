@@ -14,7 +14,7 @@ from pathlib import Path
 # Builds a U-Net model for a given image size and filter count.
 def BuildModel(imageSize: Tuple[int, int], dropoutRate: float, firstLayerFilterCount: int):
     # First layer in the network is each pixel in the grayscale image
-    inputs = tf.keras.layers.Input((imageSize[0], imageSize[1], 1))
+    inputs = tf.keras.layers.Input((imageSize[0], imageSize[1], 3))
 
     # Contracting path identifies features at increasing levels of detail
     # (i.e. intensity, edges, shapes, texture...)
