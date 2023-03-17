@@ -51,7 +51,16 @@ Such as:
 
 > python OrganoID.py train /path/to/trainingData /path/to/outputFolder NewModelName -M TrainableModel
 
-DATASET:
+
+<h1>USER INTERFACE</h1>
+
+OrganoID now includes a user interface. To start the interface, run:
+
+> python OrganoID_UI.py
+
+The parameters in the interface correspond to those in the command-line tool.
+
+<h1>DATASET</h1>
 
 The dataset for model training and all validation/testing from the OrganoID publication is openly available here:
 https://osf.io/xmes4/
