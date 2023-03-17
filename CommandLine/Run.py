@@ -62,6 +62,8 @@ class Run(Program):
                                  "be produced as a .gif")
         parser.add_argument("--batch", action="store_true",
                             help="If this is set, image stacks will be separately tracked.")
+        parser.add_argument("--analyze", action="store_true",
+                            help="If this is set, images will be analyzed to an Excel file.")
 
     @staticmethod
     def SaveImages(data, suffix, pilImages, outputPath):
@@ -81,4 +83,4 @@ class Run(Program):
                     not parserArgs.nofill, not parserArgs.border, parserArgs.belief,
                     parserArgs.binary, not parserArgs.no_separation, parserArgs.edges,
                     parserArgs.colorize, True, parserArgs.track, parserArgs.overlay,
-                    parserArgs.gif, parserArgs.batch, False)
+                    parserArgs.gif, parserArgs.batch, parserArgs.analyzeg)

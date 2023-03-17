@@ -1,0 +1,1 @@
+python OrganoID.py train C:\Users\jonoj\Downloads\03_training-data\03_training-data C:\Users\jonoj\Downloads\NEBU NEBU -M TrainableModel

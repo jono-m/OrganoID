@@ -1,1 +1,1 @@
-python OrganoID.py train Publication\Dataset\MouseOrganoids Publication\ReviewerComments\MouseOrganoids\Retrained RetrainedModel -M TrainableModel -OD Publication\Dataset\OriginalData
+python OrganoID.py train Publication\Dataset\MouseOrganoids Publication\ReviewerComments\MouseOrganoids\Retrained RetrainedModel -M TrainableModel
