@@ -83,4 +83,4 @@ class Run(Program):
                     not parserArgs.nofill, not parserArgs.border, parserArgs.belief,
                     parserArgs.binary, not parserArgs.no_separation, parserArgs.edges,
                     parserArgs.colorize, True, parserArgs.track, parserArgs.overlay,
-                    parserArgs.gif, parserArgs.batch, parserArgs.analyzeg)
+                    parserArgs.gif, parserArgs.batch, parserArgs.analyze)
