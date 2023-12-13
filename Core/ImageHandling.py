@@ -8,6 +8,7 @@ import skimage.filters
 import skimage.measure
 import math
 from Core.HelperFunctions import printRep
+from Core.Config import ARIAL_FONT_PATH
 
 
 def ComputeOutline(image: np.ndarray):
@@ -48,7 +49,7 @@ def LabeledImagesToColoredImages(images: np.ndarray, colors=None, fontSize=0):
     colorized = colorMap[images]
 
     if fontSize > 0:
-        font = ImageFont.truetype("arial.ttf", fontSize)
+        font = ImageFont.truetype(ARIAL_FONT_PATH, fontSize)
         for i in range(images.shape[0]):
             image = Image.fromarray(colorized[i])
             drawer = ImageDraw.Draw(image)
@@ -151,7 +152,7 @@ def LoadPILImages(source: Union[pathlib.Path, List[pathlib.Path]]) -> List[Image
 def DrawRegionsOnImages(labeledImages: np.ndarray, images: np.ndarray,
                         textColor: Tuple[int, int, int],
                         fontSize: int, overlayColor: Tuple[int, int, int]):
-    font = ImageFont.truetype("arial.ttf", fontSize)
+    font = ImageFont.truetype("/System/Library/Fonts/Arial.ttf", fontSize)
     images = np.repeat(images[:, :, :, None], 3, axis=-1)
     outlined = np.zeros(images.shape[:-1], dtype=bool)
     for i in range(images.shape[0]):

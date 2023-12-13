@@ -10,6 +10,7 @@ from Core.Identification import SeparateContours, Cleanup, DetectEdges
 from Core.ImageHandling import LoadPILImages, LabeledImagesToColoredImages, SavePILImageStack
 from Core.Tracking import MatchOrganoidsInImages, Inverse, Overlap
 from Core.HelperFunctions import printRep
+from Core.Config import ARIAL_FONT_PATH
 from PIL import Image, ImageDraw, ImageFont
 import skimage.measure
 
@@ -91,7 +92,7 @@ for i in range(segmentations.shape[0]):
     automatedImageCol = Image.fromarray(LabeledImagesToColoredImages(automatedImage))
     m = ImageDraw.Draw(manualImageCol)
     a = ImageDraw.Draw(automatedImageCol)
-    font = ImageFont.truetype("arial.ttf", 20)
+    font = ImageFont.truetype(ARIAL_FONT_PATH, 20)
     oID = 1
     for manualOrganoid, automatedOrganoid in matches:
         if manualOrganoid is None or automatedOrganoid is None:

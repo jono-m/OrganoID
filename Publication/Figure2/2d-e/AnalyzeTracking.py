@@ -3,6 +3,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(".").resolve()))
 from Core.ImageHandling import LoadPILImages, GetFrames
+from Core.Config import ARIAL_FONT_PATH
 import numpy as np
 import skimage.measure
 import skimage.morphology
@@ -13,7 +14,7 @@ from PIL import ImageFont, ImageDraw, Image
 def DrawAndHighlight(labeled, image, labelsAndColorToHighlight, savePath):
     overlay = Image.new("RGBA", tuple(reversed(image.shape)), (255, 255, 255, 0))
     drawer = ImageDraw.Draw(overlay)
-    font = ImageFont.truetype("arial.ttf", 24)
+    font = ImageFont.truetype(ARIAL_FONT_PATH, 24)
     for rp in skimage.measure.regionprops(labeled):
         if rp.label in labelsAndColorToHighlight:
             color = labelsAndColorToHighlight[rp.label]
